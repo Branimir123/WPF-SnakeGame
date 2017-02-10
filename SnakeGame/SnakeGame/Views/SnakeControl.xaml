@@ -136,7 +136,7 @@
                         </ItemsControl>
                     </Border>
 
-                    <Border DataContext="{Binding SnakeObstacle}">
+                    <Border DataContext="{Binding EnemySnake}">
                         <ItemsControl ItemsSource="{Binding Parts}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>

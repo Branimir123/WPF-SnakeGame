@@ -23,6 +23,8 @@ namespace SnakeGame.ViewModels
 
         public Snake Snake { get; set; }
 
+        public EnemySnake EnemySnake { get; set; }
+
         public void ChangeDirection(Directions direction)
         {
             Snake.ChangeDirection(direction);
@@ -31,7 +33,11 @@ namespace SnakeGame.ViewModels
         //Main game logic goes below: 
         public void StartGame()
         {
+            //Initializes the player snake
             InitializeSnake();
+
+            //Initialie the enemy snake 
+            InitializeEnemySnake();
 
             //Check of timer is null
             timer?.Stop();
@@ -40,11 +46,13 @@ namespace SnakeGame.ViewModels
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(50);
             int ticksCounter = 0;
+
+            //Do this on every tick of the timer;
             timer.Tick += delegate
             {
                 //At every tick move the snake and the enemy snake
                 Snake.Move();
-               
+                EnemySnake.Move();
                
                 //Increase counter ticks
                 ticksCounter++;
@@ -59,6 +67,7 @@ namespace SnakeGame.ViewModels
               //  }
 
                 this.OnPropertyChanged("Snake");
+                this.OnPropertyChanged("EnemySnake");
             };
 
             //Start the timer
@@ -74,6 +83,16 @@ namespace SnakeGame.ViewModels
             var size = BaseConstants.DefaultSnakeSize;
             var speed = BaseConstants.DefaultSnakeSpeed;
             this.Snake = new Snake(position, size, speed);
+        }
+
+        private void InitializeEnemySnake()
+        {
+            var x = BaseConstants.MaxX / 4;
+            var y = BaseConstants.MaxY / 4;
+            var position = new Position(x, y);
+            var size = BaseConstants.DefaultSnakeSize;
+            var speed = BaseConstants.DefaultSnakeSpeed;
+            this.EnemySnake = new EnemySnake(position, size, speed);
         }
     }
 }
