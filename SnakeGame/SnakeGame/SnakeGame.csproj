@@ -56,10 +56,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\BaseConstants.cs" />
+    <Compile Include="GameObjects\Abstract\GameObject.cs" />
     <Compile Include="GameObjects\Common\Position.cs" />
     <Compile Include="GameObjects\Contracts\IDestroyable.cs" />
     <Compile Include="GameObjects\Contracts\IMoveable.cs" />
     <Compile Include="GameObjects\Enums\Directions.cs" />
+    <Compile Include="GameObjects\Snake\Snake.cs" />
+    <Compile Include="GameObjects\Snake\SnakeHead.cs" />
+    <Compile Include="GameObjects\Snake\SnakeSegment.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Views\SnakeControl.xaml.cs">
       <DependentUpon>SnakeControl.xaml</DependentUpon>
