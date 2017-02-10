@@ -4,9 +4,229 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SnakeGame.Views"
+             xmlns:viewModels="clr-namespace:SnakeGame.ViewModels"
+             xmlns:converters="clr-namespace:SnakeGame.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             KeyDown="UserControl_KeyDown" 
+             d:DesignHeight="600" d:DesignWidth="750">
+    <UserControl.Resources>
+        <converters:DirectionToInt x:Key="converter" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <viewModels:GameEngine />
+    </UserControl.DataContext>
     <Grid>
-            
+        <DockPanel>
+            <TextBlock  DataContext="{Binding Snake}"  DockPanel.Dock="Top" Name="ButtonTest" Text="{Binding Size}" Height="25"/>
+            <Button DockPanel.Dock="Bottom" Click="Button_Click" Content="Start Game" Height="25"/>
+            <Border BorderBrush="Black" BorderThickness="2" Height="{Binding Height}" Width="{Binding Width}">
+                <Grid>
+
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding Obstacles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Width="{Binding Size}" Height="{Binding Size}"
+                                           Fill="Red" RadiusX="3" RadiusY="6" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding MovingObstacles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="{Binding Size}" Height="{Binding Size}" >
+
+                                    <Path Data="M8.875,4.5625 C10.596046,3.0348302 11.311928,3.5 13.8125,3.5 13.791667,3.5208333 13.770833,3.5416667 13.75,3.5625 11.990426,2.3056611 10.835001,2.5 8.375,2.5 7.5156807,2.5 6.8883793,2.8367463 6.1875,3.4375 5.934737,3.654154 5.5320544,3.8733913 5.375,4.1875 5.166056,4.605388 5.125,4.906412 5.125,5.4375 4.404605,4.717105 4.3226606,3.7820181 4.75,2.5 5.0209325,1.6872024 5.4238404,0.50455321&#xd;&#xa;6.375,0.1875 5.3563133,0.1875 4.9033791,0.4716209 4.0625,1.3125 3.23886,2.13614 3.1076055,2.5244727 2.875,3.6875 2.6642698,4.741151 2.7899602,5.3393487 3.0625,6.375 3.2767729,7.1892369 3.5128411,7.8501705 4.4375,8.3125 3.0913976,8.9855512 1.3808433,7.9889055 0.1875,6 0.1875,7.9646013 -0.16827559,8.4302835 1.75,9.9375 3.2492234,11.115461 4.0449815,10.941004 6.25,10.5 4.8720282,11.877972&#xd;&#xa;4.0501307,12.1875 1.75,12.1875 3.0182856,12.948471 4.5212226,12.986046 6.3125,12.6875 7.8261981,12.435217 8.5289559,11.70174 9.4375,10.1875 9.8411066,10.994713 9.0580363,12.075891 8.75,13 8.4392329,13.932301 8.1340926,14.432954 7.125,14.9375 8.5860008,14.9375 9.666835,14.441381 10.625,12.8125 11.084061,12.032095 11.113591,11.236938 11.3125,10.375 11.568415,9.2660351 11.57754,8.9575532 10.8125,7.9375&#xd;&#xa;12.340435,8.1921558 13.142134,9.1421341 14.3125,10.3125 15.024996,8.8875088 14.732313,7.7211095 12.9375,6.375 11.753234,5.4868003 10.328058,4.98987 8.875,4.5625 z" Margin="0.161,0.188,0.328,0.062" Stretch="Fill" Fill="Black"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Border DataContext="{Binding Snake}">
+                        <ItemsControl ItemsSource="{Binding Parts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Width="{Binding Size}" Height="{Binding Size}" RadiusX="50" RadiusY="50">
+                                        <Rectangle.Fill>
+                                            <RadialGradientBrush>
+                                                <GradientStop Color="Black" Offset="0.244"/>
+                                                <GradientStop Color="#FF8E592F" Offset="0.652"/>
+                                            </RadialGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                    <Border DataContext="{Binding Snake}">
+                        <ItemsControl ItemsSource="{Binding Head}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding Size}" Height="{Binding Size}" RenderTransformOrigin="0.5,0.5" >
+                                        <Grid.RenderTransform >
+                                            <TransformGroup >
+                                                <RotateTransform Angle="{Binding Path=Direction,Converter={StaticResource converter}}" />
+
+                                            </TransformGroup>
+                                        </Grid.RenderTransform>
+
+                                        <Rectangle  RadiusX="50" RadiusY="50" Fill="#FF8E592F" />
+                                        <Rectangle Margin="5.334,1.084,3.582,0" RadiusY="50" RadiusX="50" Height="6.083" VerticalAlignment="Top">
+                                            <Rectangle.Fill>
+                                                <RadialGradientBrush>
+                                                    <GradientStop Color="Black" Offset="0.363"/>
+                                                    <GradientStop Color="White" Offset="0.159"/>
+                                                </RadialGradientBrush>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                        <Rectangle Height="5.915" Margin="5.584,0,3.499,1.085" RadiusY="50" RadiusX="50" VerticalAlignment="Bottom">
+                                            <Rectangle.Fill>
+                                                <RadialGradientBrush>
+                                                    <GradientStop Color="Black" Offset="0.363"/>
+                                                    <GradientStop Color="White" Offset="0.159"/>
+                                                </RadialGradientBrush>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                        <Path Data="M11.25,6.6666667 C12.194794,6.7385532 13.078609,7.2547239 13.916667,6.4166667 14.467861,5.8654721 14.831125,5.2507363 15.583333,5 15.772434,4.9369665 18.434444,4.7546918 16.833333,6 16.281785,6.4289823 14.634475,5.8905836 14.5,7 14.495092,7.0404945 16.283637,7.8918183 16.666667,8.0833333 16.793215,8.1466076 17.886752,8.7226496 16.916667,8.9166667 16.256091,9.0487819 16.182352,8.9788509 15.666667,8.5 14.880249,7.7697555 14.467543,7.75&#xd;&#xa;13.25,7.75 11.290638,7.75 12.0419,8.8331844 11.25,6.6666667 z" HorizontalAlignment="Right" Margin="0,4.87,-3.927,6.107" Stretch="Fill" Width="6.094" Fill="Black"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <Border DataContext="{Binding SnakeObstacle}">
+                        <ItemsControl ItemsSource="{Binding Parts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Width="{Binding Size}" Height="{Binding Size}" RadiusX="50" RadiusY="50" >
+                                        <Rectangle.Fill>
+                                            <RadialGradientBrush>
+                                                <GradientStop Color="#FFFF3A00" Offset="0.926"/>
+                                                <GradientStop Color="#FFE6F11C" Offset="0.274"/>
+                                            </RadialGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding MovingFoods}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="{Binding Size}" Height="{Binding Size}">
+                                    <Path Data="M3.96875,1.53125 C3.3622972,1.4927451 2.7774438,1.7617388 2.09375,1.625 1.4693864,1.5001273 0.9413746,1.4316881 0.4375,2.1875 -0.33046691,3.3394504 -0.154794,4.554883 0.125,6.09375 0.23443555,6.6956455 0.38826457,7.2229321 0.65625,7.8125 0.90188327,8.3528932 1.1178812,8.8212837 1.46875,9.3125 1.9032226,9.9207616 1.9639604,10.248727 3,9.8125 3.3146043,9.680035 3.5675507,9.5658671 3.9375,9.8125 4.0379576,9.8794717 4.159829,10.03125&#xd;&#xa;4.28125,10.03125 4.4771092,10.03125 4.5480854,9.9807438 4.625,9.75 4.9728644,9.6340452 5.3067435,9.6244679 5.6875,9.78125 5.8545399,9.8500311 6.0046347,9.9009269 6.1875,9.9375 6.4096547,9.9819309 6.4426071,9.9772768 6.65625,9.84375 6.9090357,9.685759 6.7592133,9.6848945 7.03125,9.9375 7.1725816,10.068736 7.3124165,10.125042 7.5625,10 7.8708538,9.8458231 8.0614575,9.7359388 8.28125,9.40625 8.4519464,9.1502055&#xd;&#xa;8.7110656,8.8903688 8.84375,8.625 9.0041039,8.3042922 9.048551,7.9376353 9.1875,7.625 9.480908,6.9648319 9.71875,6.3572029 9.71875,5.59375 9.71875,4.7801971 9.6076495,4.0778181 9.40625,3.3125 9.2341577,2.6585492 8.9513961,2.0405141 8.28125,1.59375 7.5454998,1.1032499 7.0301348,0.95331087 6,1.125 5.6302213,1.1866298 5.3043448,1.2943851 4.96875,1.40625 4.6037896,1.5279035 4.1985406,1.46875 3.78125,1.46875&#xd;&#xa;" Fill="#FF6F8E2F" Margin="-0.113,1.057,0.281,-0.07" Stretch="Fill" StrokeThickness="2"/>
+                                    <Path Data="M3.5625,9.65625 C4.1055091,9.856306 4.5299466,10.09375 5.15625,10.09375 5.8499902,10.09375 6.2120016,9.9937446 6.8125,9.71875" Fill="#FF6F8E2F" Height="0.438" Margin="3.562,0,3.188,-0.094" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Bottom"/>
+                                    <Path Data="M4.34375,1.5 C4.4212162,1.1064715 4.4556333,0.83726071 4.6875,0.5 4.7997774,0.33668738 4.8314144,0.17804278 5,0.09375 5.2275396,-0.020019809 5.2261872,0.036827869 5.46875,0.21875 5.2879855,0.45976929 5.0514382,0.70519896 4.90625,0.9375 4.6134007,1.4060589 5.1598956,1.59375 4.34375,1.59375 4.3411659,1.5730775 4.3517226,1.5504975 4.34375,1.53125 4.3381125,1.51764 4.3210624,1.5119874 4.3125,1.5 4.3229167,1.5 4.3333333,1.5&#xd;&#xa;4.34375,1.5 z" Fill="#FF0A0A0A" Height="1.559" Margin="4.312,0.035,4.531,0" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Top"/>
+                                    <Path Data="M4.90625,0.3125 C4.3092624,0.014006193 3.8523239,-0.17842957 3.09375,0.125 2.6441262,0.30484952 2.1023795,0.59409893 1.78125,0.96875 1.4260082,1.3831987 1.17677,1.631438 0.71875,1.90625 0.20905234,2.2120686 0.1337621,2.5560169 0.71875,3.375 0.71875,3.0208066 0.67252201,2.3908407 1.46875,2.65625 1.703757,2.7345857 1.8554205,2.78125 2.125,2.78125 2.4208051,2.78125 2.5038943,2.7281345 2.75,2.53125 3.7704594,1.7148825 2.3027184,0.63803187&#xd;&#xa;4.3125,1.03125" HorizontalAlignment="Left" Height="3.403" Margin="0.308,-0.028,0,0" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Top" Width="4.598">
+                                        <Path.Fill>
+                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                <GradientStop Color="#FF82AB3E" Offset="0.096"/>
+                                                <GradientStop Color="#FFA7F91D" Offset="0.663"/>
+                                            </LinearGradientBrush>
+                                        </Path.Fill>
+                                    </Path>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding Foods}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Canvas.Left" Value="{Binding Path=Position.X}"/>
+                                <Setter Property="Canvas.Top" Value="{Binding Path=Position.Y}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="{Binding Size}" Height="{Binding Size}">
+                                    <Path Data="M3.96875,1.53125 C3.3622972,1.4927451 2.7774438,1.7617388 2.09375,1.625 1.4693864,1.5001273 0.9413746,1.4316881 0.4375,2.1875 -0.33046691,3.3394504 -0.154794,4.554883 0.125,6.09375 0.23443555,6.6956455 0.38826457,7.2229321 0.65625,7.8125 0.90188327,8.3528932 1.1178812,8.8212837 1.46875,9.3125 1.9032226,9.9207616 1.9639604,10.248727 3,9.8125 3.3146043,9.680035 3.5675507,9.5658671 3.9375,9.8125 4.0379576,9.8794717 4.159829,10.03125&#xd;&#xa;4.28125,10.03125 4.4771092,10.03125 4.5480854,9.9807438 4.625,9.75 4.9728644,9.6340452 5.3067435,9.6244679 5.6875,9.78125 5.8545399,9.8500311 6.0046347,9.9009269 6.1875,9.9375 6.4096547,9.9819309 6.4426071,9.9772768 6.65625,9.84375 6.9090357,9.685759 6.7592133,9.6848945 7.03125,9.9375 7.1725816,10.068736 7.3124165,10.125042 7.5625,10 7.8708538,9.8458231 8.0614575,9.7359388 8.28125,9.40625 8.4519464,9.1502055&#xd;&#xa;8.7110656,8.8903688 8.84375,8.625 9.0041039,8.3042922 9.048551,7.9376353 9.1875,7.625 9.480908,6.9648319 9.71875,6.3572029 9.71875,5.59375 9.71875,4.7801971 9.6076495,4.0778181 9.40625,3.3125 9.2341577,2.6585492 8.9513961,2.0405141 8.28125,1.59375 7.5454998,1.1032499 7.0301348,0.95331087 6,1.125 5.6302213,1.1866298 5.3043448,1.2943851 4.96875,1.40625 4.6037896,1.5279035 4.1985406,1.46875 3.78125,1.46875&#xd;&#xa;" Fill="#FF6F8E2F" Margin="-0.113,1.057,0.281,-0.07" Stretch="Fill" StrokeThickness="2"/>
+                                    <Path Data="M3.5625,9.65625 C4.1055091,9.856306 4.5299466,10.09375 5.15625,10.09375 5.8499902,10.09375 6.2120016,9.9937446 6.8125,9.71875" Fill="#FF6F8E2F" Height="0.438" Margin="3.562,0,3.188,-0.094" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Bottom"/>
+                                    <Path Data="M4.34375,1.5 C4.4212162,1.1064715 4.4556333,0.83726071 4.6875,0.5 4.7997774,0.33668738 4.8314144,0.17804278 5,0.09375 5.2275396,-0.020019809 5.2261872,0.036827869 5.46875,0.21875 5.2879855,0.45976929 5.0514382,0.70519896 4.90625,0.9375 4.6134007,1.4060589 5.1598956,1.59375 4.34375,1.59375 4.3411659,1.5730775 4.3517226,1.5504975 4.34375,1.53125 4.3381125,1.51764 4.3210624,1.5119874 4.3125,1.5 4.3229167,1.5 4.3333333,1.5&#xd;&#xa;4.34375,1.5 z" Fill="#FF0A0A0A" Height="1.559" Margin="4.312,0.035,4.531,0" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Top"/>
+                                    <Path Data="M4.90625,0.3125 C4.3092624,0.014006193 3.8523239,-0.17842957 3.09375,0.125 2.6441262,0.30484952 2.1023795,0.59409893 1.78125,0.96875 1.4260082,1.3831987 1.17677,1.631438 0.71875,1.90625 0.20905234,2.2120686 0.1337621,2.5560169 0.71875,3.375 0.71875,3.0208066 0.67252201,2.3908407 1.46875,2.65625 1.703757,2.7345857 1.8554205,2.78125 2.125,2.78125 2.4208051,2.78125 2.5038943,2.7281345 2.75,2.53125 3.7704594,1.7148825 2.3027184,0.63803187&#xd;&#xa;4.3125,1.03125" HorizontalAlignment="Left" Height="3.403" Margin="0.308,-0.028,0,0" Stretch="Fill" StrokeThickness="2" VerticalAlignment="Top" Width="4.598">
+                                        <Path.Fill>
+                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                <GradientStop Color="#FF82AB3E" Offset="0.096"/>
+                                                <GradientStop Color="#FFA7F91D" Offset="0.663"/>
+                                            </LinearGradientBrush>
+                                        </Path.Fill>
+                                    </Path>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+        </DockPanel>
     </Grid>
 </UserControl>
