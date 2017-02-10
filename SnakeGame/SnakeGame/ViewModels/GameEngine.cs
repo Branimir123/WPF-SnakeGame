@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using SnakeGame.Constants;
 using SnakeGame.GameObjects.Common;
 using SnakeGame.GameObjects.Enums;
+using SnakeGame.GameObjects.Obstacles.MovingObstacles;
 using SnakeGame.GameObjects.Obstacles.StaticObstacles;
 using SnakeGame.GameObjects.Snake;
 
@@ -18,6 +19,8 @@ namespace SnakeGame.ViewModels
 
         private ObservableCollection<Obstacle> obstacles;
 
+        private ObservableCollection<MovingObstacle> movingObstacles;
+
         private int randomMovingObjectsChecker;
 
         public GameEngine()
@@ -28,10 +31,12 @@ namespace SnakeGame.ViewModels
 
         public int Width => BaseConstants.MaxX;
 
+        //Snakes:
         public Snake Snake { get; set; }
 
         public EnemySnake EnemySnake { get; set; }
 
+        //Obstacles:
         public IEnumerable<Obstacle> Obstacles
         {
             get
@@ -56,6 +61,39 @@ namespace SnakeGame.ViewModels
             }
         }
 
+        public IEnumerable<MovingObstacle> MovingObstacles
+        {
+            get
+            {
+                return this.movingObstacles;
+            }
+            set
+            {
+                if (this.movingObstacles == null)
+                {
+                    this.movingObstacles = new ObservableCollection<MovingObstacle>();
+                }
+                else
+                {
+                    this.movingObstacles.Clear();
+                }
+                foreach (var item in value)
+                {
+                    this.movingObstacles.Add(item);
+                }
+                this.OnPropertyChanged("MovingObstacles");
+            }
+        }
+
+        private void MoveObstacles()
+        {
+            foreach (var obstacle in this.MovingObstacles)
+            {
+                obstacle.Move();
+            }
+
+            OnPropertyChanged("MovingObstacles");
+        }
 
         public void ChangeDirection(Directions direction)
         {
@@ -73,6 +111,9 @@ namespace SnakeGame.ViewModels
 
             //Initializes the obstacles
             InitializeObstacles();
+
+            //Initializes the moving obstacles
+            InitilizeMovingObstacles();
 
             //Check of timer is null
             timer?.Stop();
@@ -102,7 +143,10 @@ namespace SnakeGame.ViewModels
 
                 //Increase counter ticks
                 ticksCounter++;
-                
+
+                //Move obstacles which are able to move
+                this.MoveObstacles();
+
                 //Check if snake is dead
                 var isDead = IsSnakeDead();
                 if (isDead)
@@ -120,7 +164,7 @@ namespace SnakeGame.ViewModels
             timer.Start();
         }
 
-        //Initializes the Player snake
+        //Functions to initialize the game objects
         private void InitializeSnake()
         {
             var x = BaseConstants.MaxX / 2;
@@ -164,6 +208,25 @@ namespace SnakeGame.ViewModels
             this.Obstacles = obstacles;
         }
 
+        private void InitilizeMovingObstacles()
+        {
+            var movingObstaclesCount = 
+                random.Next(BaseConstants.MinMovingObstaclesCount,
+                BaseConstants.MaxMovingObstaclesCount);
+            List<MovingObstacle> movingObstacles = new List<MovingObstacle>();
+            for (int i = 0; i < movingObstaclesCount; i++)
+            {
+                var size = BaseConstants.SquareSize;
+
+                var x = random.Next(BaseConstants.MaxX - size);
+                var y = random.Next(BaseConstants.MaxY - size);
+                Position position = new Position(x, y);
+                var newObstacle = new MovingObstacle(position, size, random.Next(BaseConstants.MinMovingObstaclesSpeed, BaseConstants.MaxMovingObstaclesSpeed));
+                movingObstacles.Add(newObstacle);
+            }
+            this.MovingObstacles = movingObstacles;
+        }
+
         private void EnemySnakeChangeDirection()
         {
             Directions newDirection = (Directions)random.Next(0, 4);
@@ -181,7 +244,7 @@ namespace SnakeGame.ViewModels
             return eaten || crashedInMovingSnakeObstacke || outsideOfGameField || crashedInObstacle;
         }
 
-        //Checks if snake has eaten itself
+        //Helper functions to check if snake is dead:
         private bool HasSnakeEatenItself()
         {
             var head = this.Snake.Parts[0];
@@ -197,8 +260,6 @@ namespace SnakeGame.ViewModels
             }
             return false;
         }
-
-        //Checks if snake has touched enemy snake
         private bool HasSnakeTouchedEnemySnake()
         {
             foreach (var snakePart in this.Snake.Parts)
@@ -215,7 +276,6 @@ namespace SnakeGame.ViewModels
             }
             return false;
         }
-
         private bool HasCrashedInObstacle()
         {
             var head = this.Snake.Parts[0];

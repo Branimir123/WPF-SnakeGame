@@ -195,7 +195,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <ItemsControl Background="Transparent" ItemsSource="{Binding Foods}" Width="996" Height="550">
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding Foods}" Width="996" Height="540">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Canvas/>
