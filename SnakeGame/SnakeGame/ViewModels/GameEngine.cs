@@ -176,8 +176,9 @@ namespace SnakeGame.ViewModels
             var eaten = HasSnakeEatenItself();
             var crashedInMovingSnakeObstacke = HasSnakeTouchedEnemySnake();
             var outsideOfGameField = HasSnakeLeftTheGameField();
+            var crashedInObstacle = HasCrashedInObstacle();
 
-            return eaten || crashedInMovingSnakeObstacke || outsideOfGameField;
+            return eaten || crashedInMovingSnakeObstacke || outsideOfGameField || crashedInObstacle;
         }
 
         //Checks if snake has eaten itself
@@ -215,6 +216,20 @@ namespace SnakeGame.ViewModels
             return false;
         }
 
+        private bool HasCrashedInObstacle()
+        {
+            var head = this.Snake.Parts[0];
+            foreach (var obstacle in this.Obstacles)
+            {
+                var isOver = IsOver(head.Position, head.Size,
+                    obstacle.Position, obstacle.Size);
+                if (isOver)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         private bool HasSnakeLeftTheGameField()
         {
             //TODO: Implement logic here

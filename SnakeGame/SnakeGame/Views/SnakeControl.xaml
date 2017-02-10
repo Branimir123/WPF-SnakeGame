@@ -90,7 +90,7 @@
                         </ItemsControl>
                     </Border>
                     <Border DataContext="{Binding Snake}">
-                        <ItemsControl ItemsSource="{Binding Head}" Width="990">
+                        <ItemsControl ItemsSource="{Binding Head}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas/>
@@ -136,7 +136,7 @@
                         </ItemsControl>
                     </Border>
 
-                    <Border DataContext="{Binding EnemySnake}" Height="536">
+                    <Border DataContext="{Binding EnemySnake}">
                         <ItemsControl ItemsSource="{Binding Parts}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
