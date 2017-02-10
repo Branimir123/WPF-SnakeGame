@@ -224,7 +224,7 @@ namespace SnakeGame.ViewModels
 
                 ////Check for eaten food or obstacle
                 CheckFoodEaten();
-                CheckFoodEatenSnkeObstakle();
+                CheckFoodEatenSnakeObstakle();
 
                 //Check if snake is dead
                 var isDead = IsSnakeDead();
@@ -275,7 +275,7 @@ namespace SnakeGame.ViewModels
                 }
             }
         }
-        private void CheckFoodEatenSnkeObstakle()
+        private void CheckFoodEatenSnakeObstakle()
         {
             foreach (var food in this.Foods)
             {
