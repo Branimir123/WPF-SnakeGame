@@ -68,15 +68,15 @@ namespace SnakeGame.ViewModels
 
                 //Increase counter ticks
                 ticksCounter++;
-                
 
-              
+
+
                 //Check if snake is dead
-                //var isDead = CheckSnakeDead();
-                //if (isDead)
-              //  {
-              //      GameOver();
-              //  }
+                var isDead = IsSnakeDead();
+                if (isDead)
+                {
+                    GameOver();
+                }
 
                 this.OnPropertyChanged("Snake");
                 this.OnPropertyChanged("EnemySnake");
@@ -111,6 +111,81 @@ namespace SnakeGame.ViewModels
         {
             Directions newDirection = (Directions)random.Next(0, 4);
             this.EnemySnake.ChangeDirection(newDirection);
+        }
+
+        //Checks if snake is dead
+        private bool IsSnakeDead()
+        {
+            var eaten = HasSnakeEatenItself();
+            var crashedInMovingSnakeObstacke = HasSnakeTouchedEnemySnake();
+
+            return eaten || crashedInMovingSnakeObstacke;
+        }
+
+        //Checks if snake has eaten itself
+        private bool HasSnakeEatenItself()
+        {
+            var head = this.Snake.Parts[0];
+            for (int i = 1; i < this.Snake.Parts.Count; i++)
+            {
+                var part = this.Snake.Parts[i];
+                var isOver = IsOver(head.Position, head.Size,
+                    part.Position, part.Size);
+                if (isOver)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //Checks if snake has touched enemy snake
+        private bool HasSnakeTouchedEnemySnake()
+        {
+            foreach (var snakePart in this.Snake.Parts)
+            {
+                foreach (var snakeObstaclePart in this.EnemySnake.Parts)
+                {
+                    var isOver = IsOver(snakePart.Position, snakePart.Size,
+                        snakeObstaclePart.Position, snakeObstaclePart.Size);
+                    if (isOver)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        //Checks if is over
+        private bool IsOver(Position p1, int size1, Position p2, int size2)
+        {
+            var fX1 = p1.X;
+            var fX2 = p1.X + size1 - 1;
+
+            var fY1 = p1.Y;
+            var fY2 = p1.Y + size1 - 1;
+
+            var oX1 = p2.X;
+            var oX2 = p2.X + size2 - 1;
+
+            var oY1 = p2.Y;
+            var oY2 = p2.Y + size2 - 1;
+
+            bool fX1InObstacle = oX1 <= fX1 && fX1 <= oX2;
+            bool fX2InObstacle = oX1 <= fX2 && fX2 <= oX2;
+
+            bool fY1InObstacle = oY1 <= fY1 && fY1 <= oY2;
+            bool fY2InObstacle = oY1 <= fY2 && fY2 <= oY2;
+
+            return (fX1InObstacle || fX2InObstacle) &&
+                   (fY1InObstacle || fY2InObstacle);
+        }
+
+        //Stops the game timer
+        private void GameOver()
+        {
+            timer.Stop();
         }
     }
 }
