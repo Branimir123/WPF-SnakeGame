@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:my="clr-namespace:SnakeGame.Views" 
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1200">
+        Title="TheSnake" Height="600" Width="1200">
     <Grid>
         <my:SnakeControl/>
     </Grid>
