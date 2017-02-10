@@ -474,7 +474,9 @@ namespace SnakeGame.ViewModels
 
             return eatenItself ||
                    crashedInMovingSnakeObstacle ||
-                   outsideOfGameField;
+                   outsideOfGameField ||
+                   crashedInObstacle ||
+                   crashedInMovingObstacle;
         }
 
         //Helper functions to check if snake is dead:
