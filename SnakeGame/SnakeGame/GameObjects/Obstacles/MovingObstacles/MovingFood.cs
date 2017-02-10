@@ -26,10 +26,7 @@ namespace SnakeGame.GameObjects.Obstacles.MovingObstacles
 
         public int Speed
         {
-            get
-            {
-                return this.speed;
-            }
+            get { return this.speed; }
             set
             {
                 if (value <= 0)
@@ -41,11 +38,7 @@ namespace SnakeGame.GameObjects.Obstacles.MovingObstacles
             }
         }
 
-        public Directions Direction
-        {
-            get;
-            set;
-        }
+        public Directions Direction { get; set; }
 
         public void Move()
         {
@@ -62,3 +55,4 @@ namespace SnakeGame.GameObjects.Obstacles.MovingObstacles
             this.Direction = direction;
         }
     }
+}

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using SnakeGame.Constants;
 using SnakeGame.GameObjects.Common;
 using SnakeGame.GameObjects.Enums;
+using SnakeGame.GameObjects.Obstacles.StaticObstacles;
 using SnakeGame.GameObjects.Snake;
 
 namespace SnakeGame.ViewModels
@@ -12,6 +15,8 @@ namespace SnakeGame.ViewModels
         private static readonly Random random = new Random();
 
         private DispatcherTimer timer;
+
+        private ObservableCollection<Obstacle> obstacles;
 
         private int randomMovingObjectsChecker;
 
@@ -27,6 +32,31 @@ namespace SnakeGame.ViewModels
 
         public EnemySnake EnemySnake { get; set; }
 
+        public IEnumerable<Obstacle> Obstacles
+        {
+            get
+            {
+                return this.obstacles;
+            }
+            set
+            {
+                if (this.obstacles == null)
+                {
+                    this.obstacles = new ObservableCollection<Obstacle>();
+                }
+                else
+                {
+                    this.obstacles.Clear();
+                }
+                foreach (var item in value)
+                {
+                    this.obstacles.Add(item);
+                }
+                this.OnPropertyChanged("Obstacles");
+            }
+        }
+
+
         public void ChangeDirection(Directions direction)
         {
             Snake.ChangeDirection(direction);
@@ -40,6 +70,9 @@ namespace SnakeGame.ViewModels
 
             //Initialie the enemy snake 
             InitializeEnemySnake();
+
+            //Initializes the obstacles
+            InitializeObstacles();
 
             //Check of timer is null
             timer?.Stop();
@@ -80,6 +113,7 @@ namespace SnakeGame.ViewModels
                 //Notify for property changed
                 this.OnPropertyChanged("Snake");
                 this.OnPropertyChanged("EnemySnake");
+                this.OnPropertyChanged("Obstacles");
             };
 
             //Start the timer
@@ -105,6 +139,29 @@ namespace SnakeGame.ViewModels
             var size = BaseConstants.DefaultSnakeSize;
             var speed = BaseConstants.DefaultSnakeSpeed;
             this.EnemySnake = new EnemySnake(position, size, speed);
+        }
+
+        private void InitializeObstacles()
+        {
+            var obstaclesCount = random.Next(BaseConstants.MinObstaclesCount, BaseConstants.MaxObstaclesCount);
+            List<Obstacle> obstacles = new List<Obstacle>();
+            for (int i = 0; i < obstaclesCount; i++)
+            {
+                var size = BaseConstants.SquareSize;
+
+                var x = random.Next(BaseConstants.MaxX - size);
+                var y = 0;
+                do
+                {
+                    y = random.Next(BaseConstants.MaxY - size - 50);
+                }
+                while (y >= BaseConstants.MaxY / 2 - BaseConstants.SquareSize && y <= BaseConstants.MaxY / 2 + BaseConstants.SquareSize);
+
+                Position position = new Position(x, y);
+                var newObstacle = new Obstacle(position, size);
+                obstacles.Add(newObstacle);
+            }
+            this.Obstacles = obstacles;
         }
 
         private void EnemySnakeChangeDirection()

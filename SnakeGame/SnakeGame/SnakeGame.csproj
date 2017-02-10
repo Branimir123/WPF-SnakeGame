@@ -62,6 +62,10 @@
     <Compile Include="GameObjects\Contracts\IDestroyable.cs" />
     <Compile Include="GameObjects\Contracts\IMoveable.cs" />
     <Compile Include="GameObjects\Enums\Directions.cs" />
+    <Compile Include="GameObjects\Obstacles\MovingObstacles\MovingFood.cs" />
+    <Compile Include="GameObjects\Obstacles\MovingObstacles\MovingObstacle.cs" />
+    <Compile Include="GameObjects\Obstacles\StaticObstacles\Food.cs" />
+    <Compile Include="GameObjects\Obstacles\StaticObstacles\Obstacle.cs" />
     <Compile Include="GameObjects\Snake\EnemySnake.cs" />
     <Compile Include="GameObjects\Snake\Snake.cs" />
     <Compile Include="GameObjects\Snake\SnakeHead.cs" />
