@@ -3,17 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SnakeGame.Views"
-             xmlns:viewModels="clr-namespace:SnakeGame.ViewModels"
-             xmlns:converters="clr-namespace:SnakeGame.Converters"
-             mc:Ignorable="d" 
-             KeyDown="UserControl_KeyDown" 
+             xmlns:vms="clr-namespace:SnakeGame.ViewModels"
+             mc:Ignorable="d"             
+             xmlns:local="clr-namespace:SnakeGame.Converters"
+             KeyDown="UserControl_KeyDown"
+             
              d:DesignHeight="600" d:DesignWidth="750">
     <UserControl.Resources>
-        <converters:DirectionToInt x:Key="converter" />
+        <local:DirectionToInt x:Key="converter" />
     </UserControl.Resources>
     <UserControl.DataContext>
-        <viewModels:GameEngine />
+        <vms:GameEngine />
     </UserControl.DataContext>
     <Grid>
         <DockPanel>
@@ -90,7 +90,7 @@
                         </ItemsControl>
                     </Border>
                     <Border DataContext="{Binding Snake}">
-                        <ItemsControl ItemsSource="{Binding Head}">
+                        <ItemsControl ItemsSource="{Binding Head}" Width="990">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas/>
@@ -136,7 +136,7 @@
                         </ItemsControl>
                     </Border>
 
-                    <Border DataContext="{Binding EnemySnake}">
+                    <Border DataContext="{Binding EnemySnake}" Height="536">
                         <ItemsControl ItemsSource="{Binding Parts}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -195,7 +195,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <ItemsControl Background="Transparent" ItemsSource="{Binding Foods}">
+                    <ItemsControl Background="Transparent" ItemsSource="{Binding Foods}" Width="996" Height="550">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Canvas/>

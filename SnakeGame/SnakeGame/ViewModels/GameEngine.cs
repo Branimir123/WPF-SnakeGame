@@ -60,6 +60,7 @@ namespace SnakeGame.ViewModels
                 Snake.Move();
                 EnemySnake.Move();
 
+                //Change the direction of the enemy snake randomly
                 if (ticksCounter == randomMovingObjectsChecker)
                 {
                     EnemySnakeChangeDirection();
@@ -68,9 +69,7 @@ namespace SnakeGame.ViewModels
 
                 //Increase counter ticks
                 ticksCounter++;
-
-
-
+                
                 //Check if snake is dead
                 var isDead = IsSnakeDead();
                 if (isDead)
@@ -78,6 +77,7 @@ namespace SnakeGame.ViewModels
                     GameOver();
                 }
 
+                //Notify for property changed
                 this.OnPropertyChanged("Snake");
                 this.OnPropertyChanged("EnemySnake");
             };
@@ -118,8 +118,9 @@ namespace SnakeGame.ViewModels
         {
             var eaten = HasSnakeEatenItself();
             var crashedInMovingSnakeObstacke = HasSnakeTouchedEnemySnake();
+            var outsideOfGameField = HasSnakeLeftTheGameField();
 
-            return eaten || crashedInMovingSnakeObstacke;
+            return eaten || crashedInMovingSnakeObstacke || outsideOfGameField;
         }
 
         //Checks if snake has eaten itself
@@ -157,7 +158,13 @@ namespace SnakeGame.ViewModels
             return false;
         }
 
-        //Checks if is over
+        private bool HasSnakeLeftTheGameField()
+        {
+            //TODO: Implement logic here
+            return false;
+        }
+
+        //Checks if element is on top of another element
         private bool IsOver(Position p1, int size1, Position p2, int size2)
         {
             var fX1 = p1.X;
