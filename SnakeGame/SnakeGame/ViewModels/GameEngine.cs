@@ -137,6 +137,7 @@ namespace SnakeGame.ViewModels
                 //Change the direction of the enemy snake randomly
                 if (ticksCounter == randomMovingObjectsChecker)
                 {
+                    MovingObstaclesChangeDirection();
                     EnemySnakeChangeDirection();
                     ticksCounter = 0;
                 }
@@ -231,6 +232,15 @@ namespace SnakeGame.ViewModels
         {
             Directions newDirection = (Directions)random.Next(0, 4);
             this.EnemySnake.ChangeDirection(newDirection);
+        }
+
+        private void MovingObstaclesChangeDirection()
+        {
+            foreach (var movingObstacle in this.MovingObstacles)
+            {
+                Directions newDirection = (Directions)random.Next(0, 4);
+                movingObstacle.ChangeDirection(newDirection);
+            }
         }
 
         //Checks if snake is dead
