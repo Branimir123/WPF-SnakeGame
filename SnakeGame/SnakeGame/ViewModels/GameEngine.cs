@@ -211,7 +211,7 @@ namespace SnakeGame.ViewModels
 
         private void InitilizeMovingObstacles()
         {
-            var movingObstaclesCount = 
+            var movingObstaclesCount =
                 random.Next(BaseConstants.MinMovingObstaclesCount,
                 BaseConstants.MaxMovingObstaclesCount);
             List<MovingObstacle> movingObstacles = new List<MovingObstacle>();
@@ -246,12 +246,17 @@ namespace SnakeGame.ViewModels
         //Checks if snake is dead
         private bool IsSnakeDead()
         {
-            var eaten = HasSnakeEatenItself();
-            var crashedInMovingSnakeObstacke = HasSnakeTouchedEnemySnake();
+            var eatenItself = HasSnakeEatenItself();
+            var crashedInMovingSnakeObstacle = HasSnakeTouchedEnemySnake();
             var outsideOfGameField = HasSnakeLeftTheGameField();
             var crashedInObstacle = HasCrashedInObstacle();
+            var crashedInMovingObstacle = HasSnakeCrashedInMovingObstacle();
 
-            return eaten || crashedInMovingSnakeObstacke || outsideOfGameField || crashedInObstacle;
+            return eatenItself ||
+                   crashedInMovingSnakeObstacle ||
+                   outsideOfGameField ||
+                   crashedInObstacle ||
+                   crashedInMovingObstacle;
         }
 
         //Helper functions to check if snake is dead:
@@ -303,6 +308,22 @@ namespace SnakeGame.ViewModels
         private bool HasSnakeLeftTheGameField()
         {
             //TODO: Implement logic here
+            return false;
+        }
+        private bool HasSnakeCrashedInMovingObstacle()
+        {
+            foreach (var snakePart in this.Snake.Parts)
+            {
+                foreach (var movingObstacle in this.MovingObstacles)
+                {
+                    var isOver = IsOver(snakePart.Position, snakePart.Size,
+                        movingObstacle.Position, movingObstacle.Size);
+                    if (isOver)
+                    {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
