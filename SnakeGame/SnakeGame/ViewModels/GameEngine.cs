@@ -21,6 +21,10 @@ namespace SnakeGame.ViewModels
 
         private ObservableCollection<MovingObstacle> movingObstacles;
 
+        private ObservableCollection<Food> foods;
+
+        private ObservableCollection<MovingFood> movingFoods;
+
         private int randomMovingObjectsChecker;
 
         public GameEngine()
@@ -85,6 +89,53 @@ namespace SnakeGame.ViewModels
             }
         }
 
+        public IEnumerable<Food> Foods
+        {
+            get
+            {
+                return this.foods;
+            }
+            set
+            {
+                if (this.foods == null)
+                {
+                    this.foods = new ObservableCollection<Food>();
+                }
+                else
+                {
+                    this.foods.Clear();
+                }
+                foreach (var item in value)
+                {
+                    this.foods.Add(item);
+                }
+                this.OnPropertyChanged("Foods");
+            }
+        }
+
+        public IEnumerable<MovingFood> MovingFoods
+        {
+            get
+            {
+                return this.movingFoods;
+            }
+            set
+            {
+                if (this.movingFoods == null)
+                {
+                    this.movingFoods = new ObservableCollection<MovingFood>();
+                }
+                else
+                {
+                    this.movingFoods.Clear();
+                }
+                foreach (var item in value)
+                {
+                    this.movingFoods.Add(item);
+                }
+                this.OnPropertyChanged("MovingFoods");
+            }
+        }
         private void MoveObstacles()
         {
             foreach (var obstacle in this.MovingObstacles)
@@ -93,6 +144,16 @@ namespace SnakeGame.ViewModels
             }
 
             OnPropertyChanged("MovingObstacles");
+        }
+
+        private void MoveFoods()
+        {
+            foreach (var movingFood in this.MovingFoods)
+            {
+                movingFood.Move();
+            }
+
+            OnPropertyChanged("MovingFoods");
         }
 
         public void ChangeDirection(Directions direction)
@@ -115,12 +176,13 @@ namespace SnakeGame.ViewModels
             //Initializes the moving obstacles
             InitilizeMovingObstacles();
 
+            ////Initializes the food
+            InitilizeFood();
+
             //Check of timer is null
             timer?.Stop();
 
             randomMovingObjectsChecker = random.Next(BaseConstants.MinMovingObstaclesPrescaller, BaseConstants.MaxMovingObstaclesPrescaller);
-
-
 
             //Create the timer and add the tick event delegate
             timer = new DispatcherTimer();
@@ -142,11 +204,27 @@ namespace SnakeGame.ViewModels
                     ticksCounter = 0;
                 }
 
+                ////Handle moving food movement
+                foreach (var movingFood in this.MovingFoods)
+                {
+                    var shouldChangeDirection = random.Next() % 3 == 0;
+                    if (shouldChangeDirection)
+                    {
+                        Directions newDirection = (Directions)random.Next(0, 4);
+                        movingFood.ChangeDirection(newDirection);
+                    }
+                }
+
                 //Increase counter ticks
                 ticksCounter++;
 
                 //Move obstacles which are able to move
                 this.MoveObstacles();
+                this.MoveFoods();
+
+                ////Check for eaten food or obstacle
+                CheckFoodEaten();
+                CheckFoodEatenSnkeObstakle();
 
                 //Check if snake is dead
                 var isDead = IsSnakeDead();
@@ -163,6 +241,86 @@ namespace SnakeGame.ViewModels
 
             //Start the timer
             timer.Start();
+        }
+
+        private void CheckFoodEaten()
+        {
+            foreach (var food in this.Foods)
+            {
+                var isOver = IsOver(Snake.Position, Snake.Parts[0].Size,
+                    food.Position, food.Size);
+                if (isOver)
+                {
+                    this.Snake.Grow();
+                    food.Destroy();
+                    ChangeFoodPosition(food);
+                    break;
+                }
+            }
+
+            CheckMovingFoodEaten();
+        }
+        private void CheckMovingFoodEaten()
+        {
+            foreach (var movingFood in this.MovingFoods)
+            {
+                var isOver = IsOver(Snake.Position, Snake.Parts[0].Size,
+                    movingFood.Position, movingFood.Size);
+                if (isOver)
+                {
+                    this.Snake.Grow();
+                    movingFood.Destroy();
+                    ChangeFoodPosition(movingFood);
+                    break;
+                }
+            }
+        }
+        private void CheckFoodEatenSnkeObstakle()
+        {
+            foreach (var food in this.Foods)
+            {
+                var isOver = IsOver(this.EnemySnake.Position, this.EnemySnake.Parts[0].Size,
+                    food.Position, food.Size);
+                if (isOver)
+                {
+                    this.EnemySnake.Grow();
+                    this.foods.Remove(food);
+                    GenerateNewFood();
+                    break;
+                }
+            }
+        }
+
+        private void GenerateNewFood()
+        {
+
+            Position pos;
+            int size = BaseConstants.SquareSize;
+            do
+            {
+                int x = random.Next(BaseConstants.MaxX - size);
+                int y = random.Next(BaseConstants.MaxY - size - 50);
+                pos = new Position(x, y);
+            }
+            while (IsFoodOverObstacle(pos, size) || IsFoodOverFood(pos, size));
+            Food food = new Food(pos, size);
+            food.Position.X = pos.X;
+            food.Position.Y = pos.Y;
+            this.foods.Add(food);
+        }
+        private void ChangeFoodPosition(Food food)
+        {
+            Position pos;
+            int size = BaseConstants.SquareSize;
+            do
+            {
+                int x = random.Next(BaseConstants.MaxX - size);
+                int y = random.Next(BaseConstants.MaxY - size);
+                pos = new Position(x, y);
+            }
+            while (IsFoodOverObstacle(pos, size));
+            food.Position.X = pos.X;
+            food.Position.Y = pos.Y;
         }
 
         //Functions to initialize the game objects
@@ -228,6 +386,68 @@ namespace SnakeGame.ViewModels
             this.MovingObstacles = movingObstacles;
         }
 
+        private void InitilizeFood()
+        {
+            var foods = new List<Food>();
+
+            var foodCount = BaseConstants.FoodCount;
+            for (int i = 0; i < foodCount; i++)
+            {
+                int size = BaseConstants.SquareSize;
+                int x = random.Next(BaseConstants.MaxX - size);
+                int y = random.Next(BaseConstants.MaxY - size - 50);
+                Position pos = new Position(x, y);
+                bool isOver;
+                if (foods.Count == 0)
+                {
+                    isOver = IsFoodOverObstacle(pos, size);
+                }
+                else
+                {
+                    isOver = IsFoodOverObstacle(pos, size) || IsFoodOverFood(pos, size);
+                }
+                if (!isOver)
+                {
+                    Food food = new Food(pos, size);
+                    foods.Add(food);
+                    this.Foods = foods;
+                }
+                else
+                {
+                    i--;
+                }
+            }
+
+            this.Foods = foods;
+
+            //Added InitializeMovingFood();
+            InitializeMovingFood();
+        }
+
+        private void InitializeMovingFood()
+        {
+            var movingFoods = new List<MovingFood>();
+            var movingFoodCount = BaseConstants.MovingFoodCount;
+            for (int i = 0; i < movingFoodCount; i++)
+            {
+                int size = BaseConstants.SquareSize;
+                int x = random.Next(BaseConstants.MaxX - size);
+                int y = random.Next(BaseConstants.MaxY - size);
+                Position pos = new Position(x, y);
+                var isOver = IsFoodOverObstacle(pos, size);
+                if (!isOver)
+                {
+                    MovingFood movingFood = new MovingFood(pos, size, BaseConstants.MovingFoodsSpeed);
+                    movingFoods.Add(movingFood);
+                }
+                else
+                {
+                    i--;
+                }
+            }
+            this.MovingFoods = movingFoods;
+        }
+
         private void EnemySnakeChangeDirection()
         {
             Directions newDirection = (Directions)random.Next(0, 4);
@@ -254,9 +474,7 @@ namespace SnakeGame.ViewModels
 
             return eatenItself ||
                    crashedInMovingSnakeObstacle ||
-                   outsideOfGameField ||
-                   crashedInObstacle ||
-                   crashedInMovingObstacle;
+                   outsideOfGameField;
         }
 
         //Helper functions to check if snake is dead:
@@ -322,6 +540,32 @@ namespace SnakeGame.ViewModels
                     {
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+        private bool IsFoodOverObstacle(Position pos, int size)
+        {
+            foreach (var item in this.Obstacles)
+            {
+                bool isOver = IsOver(item.Position, item.Size, pos, size);
+                if (isOver)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool IsFoodOverFood(Position pos, int size)
+        {
+            foreach (var item in this.Foods)
+            {
+                bool isOver = IsOver(item.Position, item.Size, pos, size);
+                if (isOver)
+                {
+                    return true;
                 }
             }
             return false;
