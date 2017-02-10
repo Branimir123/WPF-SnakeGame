@@ -13,6 +13,8 @@ namespace SnakeGame.ViewModels
 
         private DispatcherTimer timer;
 
+        private int randomMovingObjectsChecker;
+
         public GameEngine()
         {
         }
@@ -42,6 +44,10 @@ namespace SnakeGame.ViewModels
             //Check of timer is null
             timer?.Stop();
 
+            randomMovingObjectsChecker = random.Next(BaseConstants.MinMovingObstaclesPrescaller, BaseConstants.MaxMovingObstaclesPrescaller);
+
+
+
             //Create the timer and add the tick event delegate
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(50);
@@ -53,7 +59,13 @@ namespace SnakeGame.ViewModels
                 //At every tick move the snake and the enemy snake
                 Snake.Move();
                 EnemySnake.Move();
-               
+
+                if (ticksCounter == randomMovingObjectsChecker)
+                {
+                    EnemySnakeChangeDirection();
+                    ticksCounter = 0;
+                }
+
                 //Increase counter ticks
                 ticksCounter++;
                 
@@ -93,6 +105,12 @@ namespace SnakeGame.ViewModels
             var size = BaseConstants.DefaultSnakeSize;
             var speed = BaseConstants.DefaultSnakeSpeed;
             this.EnemySnake = new EnemySnake(position, size, speed);
+        }
+
+        private void EnemySnakeChangeDirection()
+        {
+            Directions newDirection = (Directions)random.Next(0, 4);
+            this.EnemySnake.ChangeDirection(newDirection);
         }
     }
 }
