@@ -23,15 +23,6 @@ namespace SnakeGame.GameObjects.Common
             }
             set
             {
-                //if (value < 0)
-                //{
-                //    throw new ArgumentException("X cannot be less than 0", "x");
-                //}
-                //else if (value > BaseConstants.MaxX)
-                //{
-                //    throw new ArgumentException("X cannot be greater than Max X", "x");
-                //}
-
                 var newValue = value;
                 if (newValue < 0)
                 {
@@ -54,14 +45,6 @@ namespace SnakeGame.GameObjects.Common
             }
             set
             {
-                //if (value < 0)
-                //{
-                //    throw new ArgumentException("Y cannot be less than 0", "y");
-                //}
-                //else if (value > BaseConstants.MaxY)
-                //{
-                //    throw new ArgumentException("Y cannot be greater than Max Y", "y");
-                //}
                 var newValue = value;
                 if (newValue < 0)
                 {
@@ -91,7 +74,7 @@ namespace SnakeGame.GameObjects.Common
 
         public override string ToString()
         {
-            return string.Format("({0}, {1})", this.x, this.y);
+            return $"({this.x}, {this.y})";
         }
     }
 }
