@@ -14,7 +14,7 @@ namespace SnakeGame.Constants
         public const int DefaultSnakeSpeed = 15;
         public const int FoodCount = 5;
 
-        public const int MovingFoodCount = 3;
+        public const int MovingFoodCount = 15;
 
         public static readonly int MinObstaclesCount;
         public static readonly int MaxObstaclesCount;
