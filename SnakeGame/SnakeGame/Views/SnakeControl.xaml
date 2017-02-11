@@ -17,7 +17,9 @@
     </UserControl.DataContext>
     <Grid>
         <DockPanel>
-            <TextBlock  DataContext="{Binding Snake}"  DockPanel.Dock="Top" Name="ButtonTest" Text="{Binding Size}" Height="25" FontSize="35" FontWeight="Bold"/>
+            <TextBlock  DockPanel.Dock="Top" x:Name="ButtonScore" Height="25" FontSize="23" FontWeight="Bold" Foreground="#FFD1D1D1"><Run Text="Score: "/><InlineUIContainer>
+                    <TextBlock  DataContext="{Binding Snake}" x:Name="ButtonTest" Text="{Binding Size}" Height="25" FontSize="23" FontWeight="Bold" Foreground="#FFD1D1D1" Width="750"/>
+                </InlineUIContainer></TextBlock>
             <Button DockPanel.Dock="Bottom" Click="Button_Click" Content="Start Game" Height="25"/>
             <Border BorderBrush="Green" BorderThickness="3" Height="{Binding Height}" Width="{Binding Width}">
                 <Grid>
